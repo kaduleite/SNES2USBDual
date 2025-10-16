@@ -18,14 +18,14 @@ Adapter for two Super Nintendo (SNES) gamepads using an Arduino Leonardo Pro Mic
 
 ## SNES Controller Pinout
 
- -----------------\
-| 1 2 3 4 | 5 6 7  |
- -----------------/
-Pin 1: 5V
-Pin 2: Data_Clock (Arduino: Pin 6)
-Pin 3: Data_Latch (Arduino: Pin 7)
-Pin 4: Data_Serial (Arduino: Pin 12)
-Pin 5: N/A
-Pin 6: N/A
+ -----------------\\\
+| 1 2 3 4 | 5 6 7  |\
+ -----------------\/\
+Pin 1: 5V\
+Pin 2: Data_Clock (Arduino: Pin 6)\
+Pin 3: Data_Latch (Arduino: Pin 7)\
+Pin 4: Data_Serial (Arduino: Pin 12)\
+Pin 5: N/A\
+Pin 6: N/A\
 Pin 7: GND
 
