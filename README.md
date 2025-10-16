@@ -15,7 +15,7 @@ Adapter for two Super Nintendo (SNES) gamepads using an Arduino Leonardo Pro Mic
 
 ## Diagram:
 ![Diagrama](./images/snes-usb-adapter-wiring.png)
-![Diagrama](./images/Circuit Diagram.png)
+![Diagrama](./images/Circuit_Diagram.png)
 
 ## SNES Controller Pinout
 
