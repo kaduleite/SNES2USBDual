@@ -1,5 +1,3 @@
-#include "HID-Project.h"
-
 /*
   Dual SNES to USB adapter
   Developed for and tested on Arduino Leonardo Pro Micro (ATMEGA32u4)
