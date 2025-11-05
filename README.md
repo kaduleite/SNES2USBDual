@@ -13,6 +13,9 @@ Adapter for two Super Nintendo (SNES) gamepads using an Arduino Leonardo Pro Mic
 * Upload sketch to your board.
 * Play.
 
+## Known Issues:
+* Three devices in Windows instead of two. HID issue.
+
 ## Diagram:
 ![Diagrama](./images/snes-usb-adapter-wiring.png)
 ![Diagrama](./images/Circuit_Diagram.png)
