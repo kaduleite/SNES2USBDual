@@ -6,9 +6,10 @@
   https://blog.chybby.com/posts/building-a-usb-snes-controller
 
   SNES controller pinout:
-               ________________
-              | 0 0 0 0 | 0 0 0 ) 
-               ----------------      
+                1 2 3 4   5 6 7
+              ┌─────────┬───────┐
+              │ 0 0 0 0 | 0 0 0 ) 
+              └─────────┴───────┘
                 + C L D   N N G
                 V L A A   C C N
                   K T T       D
@@ -16,23 +17,25 @@
                     H
 
   Arduino pins:
-    VCC ----------------> +V
-    GND ----------------> GND
-    CLOCK --------------> 2
-    LATCH --------------> 3
-    DATA CONTROLLER 1 --> A0
-    DATA CONTROLLER 2 --> A1
+    VCC ----------------> +V   (common VCC    - SNES PIN 1)
+    GND ----------------> GND  (common ground - SNES PIN 7)
+    LATCH --------------> 2    (common latch  - SNES PIN 3)
+    CLOCK --------------> 3    (common clock  - SNES PIN 2)
+    DATA CONTROLLER 1 --> A0   (controller 1  - SNES PIN 4)
+    DATA CONTROLLER 2 --> A1   (controller 2  - SNES PIN 4)
 
 */
 
 // Install from library manager (HID-Project by NicoHood)
 #include <HID-Project.h> 
 
-#define CLOCK_PIN 3
+// ---------- Hardware ----------
 #define LATCH_PIN 2
-#define DATA_PIN A0
+#define CLOCK_PIN 3
+#define DATA1_PIN A0
 #define DATA2_PIN A1
 
+// ---------- SNES Buttons Mapping ----------
 #define SNES_BUTTON_B 0
 #define SNES_BUTTON_Y 1
 #define SNES_BUTTON_SELECT 2
@@ -57,15 +60,17 @@ const uint8_t snes_id_to_hid_id[] = { 2, 4, 7, 8, 0, 0, 0, 0, 1, 3, 5, 6, 10, 11
 
 void setup() {
   delay(10);
+
   Gamepad1.begin();
   Gamepad2.begin();
+  
   Gamepad1.releaseAll();
   Gamepad1.releaseAll();
 
   pinMode(CLOCK_PIN, OUTPUT);
   pinMode(LATCH_PIN, OUTPUT);
-  pinMode(DATA_PIN, INPUT);
-  pinMode(DATA2_PIN, INPUT);
+  pinMode(DATA1_PIN, INPUT_PULLUP);
+  pinMode(DATA2_PIN, INPUT_PULLUP);
 
   digitalWrite(CLOCK_PIN, HIGH);
 }
@@ -176,7 +181,7 @@ void loop() {
 
   for (uint8_t id = 0; id < num_buttons; id++) {
     // Sample the button state.
-    int button_pressed1 = digitalRead(DATA_PIN) == LOW;
+    int button_pressed1 = digitalRead(DATA1_PIN) == LOW;
     int button_pressed2 = digitalRead(DATA2_PIN) == LOW;
     button_states1[id] = button_pressed1;
     button_states2[id] = button_pressed2;
