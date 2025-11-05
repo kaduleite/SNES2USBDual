@@ -37,7 +37,7 @@
 #define DATA1_PIN  A0
 #define DATA2_PIN  A1
 
-// ---------- Mapeamento SNES ----------
+// ---------- SNES Buttons Mapping ----------
 enum {
   SNES_B = 0, SNES_Y, SNES_SELECT, SNES_START,
   SNES_UP, SNES_DOWN, SNES_LEFT, SNES_RIGHT,
@@ -46,17 +46,17 @@ enum {
   SNES_BUTTONS
 };
 
-// Conversão botão SNES → índice de botão HID (mesma ordem do sketch original)
+// Map SNES buttons to HID joypad buttons.
 const uint8_t snes2hid[SNES_BUTTONS] = {
   2, 4, 7, 8,        // B  Y  Select Start
-  0, 0, 0, 0,        // (D-Pad – tratados como hat)
+  0, 0, 0, 0,        // (D-Pad – treated as hat)
   1, 3, 5, 6,        // A X L R
-  10,11,12,13        // Reservados
+  10,11,12,13        // not used
 };
 
-// ---------- Objetos Joystick -----------
-/*  Parâmetros:
-    reportID, tipo, n° botões, n° hats,
+// ---------- Joystick Objects -----------
+/*  Parameters:
+    reportID, type, n buttons, n hats,
     X, Y,
     Z, Rx, Ry, Rz, Rudder, Throttle, Accelerator, Brake, Steering
 */
@@ -70,7 +70,7 @@ Joystick_ Joystick2(0x02, JOYSTICK_TYPE_GAMEPAD,
                     true, true,     // X, Y
                     false,false,false,false,false,false,false,false,false); // não inclui mais nada
 
-// Valores de eixo para esta biblioteca (0-1023 por padrão)
+// Axis values for this library (0-1023 default)
 const int AXIS_MIN    =    0;
 const int AXIS_CENTER =  512;
 const int AXIS_MAX    = 1023;
@@ -97,16 +97,16 @@ void setup() {
 
   digitalWrite(CLOCK_PIN, HIGH);
 
-  // Inicia joysticks sem envio automático
+  // Start joysticks without auto update
   Joystick1.begin(false);
   Joystick2.begin(false);
 
-  // Centra e libera tudo
+  // Center and releasy all buttons
   resetGamepad(Joystick1);
   resetGamepad(Joystick2);
 }
 
-// Centraliza e solta todos os botões de um gamepad
+// Center and releasy all buttons
 void resetGamepad(Joystick_ &js){
   js.setXAxis(AXIS_CENTER);
   js.setYAxis(AXIS_CENTER);
@@ -117,7 +117,7 @@ void resetGamepad(Joystick_ &js){
 
 // ----------------------------------------------------
 void loop() {
-  // Pulso de LATCH – copia o estado atual do SNES para o shift-register
+  // LATCH pulse – copy SNES status to shift-register
   digitalWrite(LATCH_PIN, HIGH);
   delayMicroseconds(12);
   digitalWrite(LATCH_PIN, LOW);
@@ -126,44 +126,44 @@ void loop() {
   bool state1[SNES_BUTTONS];
   bool state2[SNES_BUTTONS];
 
-  // Lê 16 bits (B, Y, Select, Start, ↑, ↓, ←, →, A, X, L, R, ...)
+  // Read 16 bits (B, Y, Select, Start, ↑, ↓, ←, →, A, X, L, R, ...)
   for (uint8_t i = 0; i < SNES_BUTTONS; i++) {
     state1[i] = (digitalRead(DATA1_PIN) == LOW);    // ativo em LOW
     state2[i] = (digitalRead(DATA2_PIN) == LOW);
 
-    // CLOCK ↓↑ para avançar no shift-register
+    // CLOCK ↓↑ to go foward on shift-register
     digitalWrite(CLOCK_PIN, LOW);
     delayMicroseconds(6);
     digitalWrite(CLOCK_PIN, HIGH);
     delayMicroseconds(6);
   }
 
-  // ---------- Atualiza Hat (D-Pad) ----------
+  // ---------- Update Hat (D-Pad) ----------
   updateHat(state1, Joystick1);
   updateHat(state2, Joystick2);
 
-  // ---------- Atualiza eixos X e Y analógicos (stick esquerdo) ----------
+  // ---------- Update analogic axis X and Y (left stick) ----------
   updateXY(state1, Joystick1);
   updateXY(state2, Joystick2);
 
-  // ---------- Atualiza botões ----------
+  // ---------- Update buttons ----------
   for (uint8_t i = 0; i < SNES_BUTTONS; i++) {
-    // ignora D-Pad (já tratado como hat)
+    // ignore D-Pad (treated as hat)
 
     if (i >= SNES_UP && i <= SNES_RIGHT) continue;
 
-    Joystick1.setButton(snes2hid[i]-1, state1[i]); // -1 para adequar o início em 0
+    Joystick1.setButton(snes2hid[i]-1, state1[i]); // -1 to consider starting at 0
     Joystick2.setButton(snes2hid[i]-1, state2[i]);
   }
 
-  // Envia relatório HID
+  // Send stato to HID
   Joystick1.sendState();
   Joystick2.sendState();
 
   delay(16);   // ~60 Hz
 }
 
-// Atualiza hat switch (D-Pad)
+// Update hat switch (D-Pad)
 void updateHat(const bool s[SNES_BUTTONS], Joystick_ &js){
   int hat = HAT_OFF;
 
@@ -187,8 +187,8 @@ void updateHat(const bool s[SNES_BUTTONS], Joystick_ &js){
   js.setHatSwitch(0, hat);
 }
 
-// Atualiza eixos X e Y analógicos (stick esquerdo)
-// O D-Pad continua lendo como eixos de movimento
+// Function to update analogic axis X and Y (left stick)
+// D-Pad still read like hat
 void updateXY(const bool s[SNES_BUTTONS], Joystick_ &js){
   int x = AXIS_CENTER;
   int y = AXIS_CENTER;
