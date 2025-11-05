@@ -2,8 +2,9 @@
 Adapter for two Super Nintendo (SNES) gamepads using an Arduino Leonardo Pro Micro from Dome's Blog - Building a USB SNES Controller (https://blog.chybby.com/posts/building-a-usb-snes-controller).
 There are two code options to use:
 * Joystick Library (https://github.com/MHeironimus/ArduinoJoystickLibrary)
-* HID Library (https://github.com/NicoHood/HID)
-Both works great, but usin HID the system show three gamepads, but just two functional.
+* HID Library (https://github.com/NicoHood/HID)    
+
+Both works great, but usin HID Library the system shows three gamepads, but just two functional.
 
 ## What you need:
 * Arduino Pro Micro (Leonardo)
